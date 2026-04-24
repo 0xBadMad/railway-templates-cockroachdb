@@ -1,26 +1,28 @@
 {
-  "$schema": "https://railway.app/railway-schema.json",
+  "$schema": "https://railway.app/template-schema.json",
   "name": "CockroachDB",
-  "description": "Single-node CockroachDB template for Railway using the official image in insecure mode.",
-  "icon": "https://www.cockroachlabs.com/favicon.ico",
-  "tags": ["database", "postgresql", "cockroachdb"],
-  "services": [
+  "description": "CockroachDB single-node insecure mode. SQL on port 26257, Admin UI on 8080.",
+  "version": "1.0.0",
+  "platform": "docker",
+  "docker": {
+    "image": "cockroachdb/cockroach:latest",
+    "port": 26257,
+    "healthCheck": {
+      "command": ["bash", "-c", "echo '' > /dev/tcp/localhost/8080"],
+      "interval": 30,
+      "timeout": 10,
+      "retries": 3
+    },
+    "env": {
+      "COCKROACH_DATABASE": "defaultdb",
+      "COCKROACH_USER": "root"
+    }
+  },
+  "variables": [
     {
-      "name": "cockroachdb",
-      "source": ".",
-      "healthcheckPath": "/health?ready=1",
-      "ports": [
-        { "port": 26257, "protocol": "tcp" },
-        { "port": 8080, "protocol": "http" }
-      ],
-      "volumes": [
-        { "mountPath": "/cockroach/cockroach-data" }
-      ],
-      "variables": [
-        { "name": "COCKROACH_DATABASE", "defaultValue": "defaultdb" },
-        { "name": "COCKROACH_USER", "defaultValue": "root" },
-        { "name": "COCKROACH_PASSWORD", "defaultValue": "" }
-      ]
+      "name": "COCKROACH_DATABASE",
+      "description": "Default database to create on startup",
+      "default": "defaultdb"
     }
   ]
 }

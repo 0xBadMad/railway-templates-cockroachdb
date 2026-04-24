@@ -1,39 +1,19 @@
 # CockroachDB on Railway
 
-A simple Railway template for CockroachDB using the official image in **single-node insecure mode**.
+Single-node CockroachDB template for Railway.
 
-## Install
+## Defaults
 
-1. Deploy this template to Railway.
-2. Keep the default volume attached to `/cockroach/cockroach-data`.
-3. Open the Admin UI on port `8080`.
+- Auth is documented as opt-in, but the template runs in insecure mode by default for reliability.
+- Volume path: `/cockroach/cockroach-data`
+- No health check
 
-## Environment Variables
+## Variables
 
+- `COCKROACH_INSECURE` (default: `true`)
 - `COCKROACH_DATABASE` (default: `defaultdb`)
-- `COCKROACH_USER` (default: `root`)
-- `COCKROACH_PASSWORD` (unused in insecure mode, kept for future secure setups)
-
-## Ports
-
-- `26257` , SQL / PostgreSQL wire protocol
-- `8080` , Admin UI
-
-## Connection String
-
-Use this format:
-
-```text
-postgresql://root@<host>:26257/defaultdb?sslmode=disable
-```
-
-If you set a non-root user, use:
-
-```text
-postgresql://<user>:<password>@<host>:26257/<database>?sslmode=disable
-```
+- `COCKROACH_PASSWORD` (required only if you build your own secure cert workflow)
 
 ## Notes
 
-- This template is intentionally **insecure** for easy Railway deployment and local development.
-- For production, CockroachDB should run as a multi-node cluster with TLS.
+CockroachDB secure single-node startup needs certs and bootstrap SQL, which is awkward for a minimal Railway template. This version keeps the template small and clearly documents that it is intended for dev use unless you add your own TLS/auth flow.

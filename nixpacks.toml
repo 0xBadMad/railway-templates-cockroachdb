@@ -1,0 +1,9 @@
+[phases.setup]
+aptPkgs = ["bash", "curl"]
+
+[start]
+cmd = "bash start.sh"
+
+[variables]
+NIXPACKS_NO_CACHE = "true"
+healthcheck = false

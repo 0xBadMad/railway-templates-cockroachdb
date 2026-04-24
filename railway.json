@@ -1,28 +1,21 @@
 {
   "$schema": "https://railway.app/template-schema.json",
   "name": "CockroachDB",
-  "description": "CockroachDB single-node insecure mode. SQL on port 26257, Admin UI on 8080.",
+  "description": "CockroachDB single-node insecure mode. SQL on 26257, Admin UI on 8080.",
   "version": "1.0.0",
-  "platform": "docker",
-  "docker": {
-    "image": "cockroachdb/cockroach:latest",
-    "port": 26257,
-    "healthCheck": {
-      "command": ["bash", "-c", "echo '' > /dev/tcp/localhost/8080"],
-      "interval": 30,
-      "timeout": 10,
-      "retries": 3
-    },
-    "env": {
-      "COCKROACH_DATABASE": "defaultdb",
-      "COCKROACH_USER": "root"
-    }
+  "build": { "dockerfile": "Dockerfile" },
+  "deploy": { "numReplicas": 1 },
+  "port": 26257,
+  "healthCheck": {
+    "command": ["bash", "-c", "echo > /dev/tcp/localhost/8080"],
+    "interval": 30,
+    "timeout": 10,
+    "retries": 3
+  },
+  "env": {
+    "COCKROACH_DATABASE": "defaultdb"
   },
   "variables": [
-    {
-      "name": "COCKROACH_DATABASE",
-      "description": "Default database to create on startup",
-      "default": "defaultdb"
-    }
+    { "name": "COCKROACH_DATABASE", "default": "defaultdb" }
   ]
 }

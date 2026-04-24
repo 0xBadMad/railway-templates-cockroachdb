@@ -1,9 +1,13 @@
+providers = ["nixpacks"]
+
 [phases.setup]
-aptPkgs = ["bash", "curl"]
+nixpkgs = ["pkgs"]
+
+[phases.install]
+build = ""
 
 [start]
-cmd = "bash start.sh"
+command = "bash start.sh"
 
-[variables]
-NIXPACKS_NO_CACHE = "true"
-healthcheck = false
+[env]
+CRDB_VERSION = "23.1.11"

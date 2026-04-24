@@ -1,34 +1,38 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
+set -e
 
-DATA_DIR="/cockroach/cockroach-data"
-DB_NAME="${COCKROACH_DATABASE:-defaultdb}"
-INSECURE="${COCKROACH_INSECURE:-true}"
+# CockroachDB single-node starter
+# Dev/demo mode — not for production without further hardening
 
-mkdir -p "$DATA_DIR"
+VERSION="${CRDB_VERSION:-23.1.11}"
+INSTALL_DIR="/usr/local/bin"
 
-if [[ "$INSECURE" == "true" ]]; then
-  exec cockroach start-single-node \
-    --insecure \
-    --store="$DATA_DIR" \
-    --listen-addr=0.0.0.0:26257 \
-    --http-addr=0.0.0.0:8080 \
-    --background=false \
-    --sql-addr=0.0.0.0:26257 \
-    --cache=.25 \
-    --max-sql-memory=.25
+# Download & install CockroachDB binary if not present
+if ! command -v cockroach &> /dev/null; then
+  echo "[setup] Downloading CockroachDB v${VERSION}..."
+  curl -fsSL "https://binaries.cockroachdb.com/cockroach-v${VERSION}.linux-amd64.tgz" \
+    | tar -xz -C /tmp
+  mv /tmp/cockroach-v${VERSION}.linux-amd64/cockroach "${INSTALL_DIR}/cockroach"
+  chmod +x "${INSTALL_DIR}/cockroach"
+  rm -rf /tmp/cockroach-v${VERSION}.linux-amd64
+  echo "[setup] CockroachDB installed"
 fi
 
-echo "COCKROACH_INSECURE=false was set, but this minimal template does not ship TLS cert bootstrapping."
-echo "Provide your own cert workflow before switching to secure mode."
-echo "Starting in insecure compatibility mode instead."
+# Persist data directory
+DATA_DIR="/cockroach/cockroach-data"
+mkdir -p "${DATA_DIR}"
 
-exec cockroach start-single-node \
+# Root password ( Railway Secret: set COCKROACH_PASSWORD )
+# Insecure mode is used here since secure single-node cert generation
+# adds significant complexity. Railway private networking limits exposure.
+echo "[start] Starting CockroachDB single-node (insecure dev mode)..."
+echo "[start] SQL port: 26257 | Admin UI: http://localhost:8080"
+echo "[start] Set COCKROACH_PASSWORD Railway secret for future secure mode."
+
+exec cockroach start \
   --insecure \
-  --store="$DATA_DIR" \
-  --listen-addr=0.0.0.0:26257 \
-  --http-addr=0.0.0.0:8080 \
-  --background=false \
-  --sql-addr=0.0.0.0:26257 \
-  --cache=.25 \
-  --max-sql-memory=.25
+  --store="${DATA_DIR}" \
+  --advertise-host=localhost \
+  --sql-addr=localhost:26257 \
+  --http-addr=localhost:8080 \
+  --background

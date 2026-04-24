@@ -1,32 +1,11 @@
 {
-  "$schema": "https://railway.app/template-schema.json",
-  "name": "CockroachDB",
-  "description": "CockroachDB single-node SQL database. Port 26257 for SQL, 8080 for Admin UI.",
-  "version": "1.0.0",
+  "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "nixpacks": "nixpacks.toml"
   },
   "deploy": {
-    "numReplicas": 1
-  },
-  "volumeMounts": {
-    "data": "/cockroach/cockroach-data"
-  },
-  "variables": [
-    {
-      "name": "COCKROACH_PASSWORD",
-      "description": "Root password secret placeholder for a future secure workflow.",
-      "default": "${{secret()}}"
-    },
-    {
-      "name": "COCKROACH_INSECURE",
-      "description": "Set 'true' for dev mode (no auth, default). Set 'false' to enable password auth once you add your own TLS/cert workflow.",
-      "default": "true"
-    },
-    {
-      "name": "COCKROACH_DATABASE",
-      "description": "Default database to create on startup.",
-      "default": "defaultdb"
-    }
-  ]
+    "start": "bash start.sh",
+    "readinessProbe": null,
+    "healthCheck": null
+  }
 }

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://railway.app/railway-schema.json",
+  "name": "CockroachDB",
+  "description": "Single-node CockroachDB template for Railway using the official image in insecure mode.",
+  "icon": "https://www.cockroachlabs.com/favicon.ico",
+  "tags": ["database", "postgresql", "cockroachdb"],
+  "services": [
+    {
+      "name": "cockroachdb",
+      "source": ".",
+      "healthcheckPath": "/health?ready=1",
+      "ports": [
+        { "port": 26257, "protocol": "tcp" },
+        { "port": 8080, "protocol": "http" }
+      ],
+      "volumes": [
+        { "mountPath": "/cockroach/cockroach-data" }
+      ],
+      "variables": [
+        { "name": "COCKROACH_DATABASE", "defaultValue": "defaultdb" },
+        { "name": "COCKROACH_USER", "defaultValue": "root" },
+        { "name": "COCKROACH_PASSWORD", "defaultValue": "" }
+      ]
+    }
+  ]
+}
